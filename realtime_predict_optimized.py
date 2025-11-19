@@ -6,7 +6,7 @@ import numpy as np
 from keras.models import load_model
 import joblib
 from collections import deque
-from livekit import proto_video, rtc
+from livekit import rtc
 from PIL import ImageFont, ImageDraw, Image
 import queue
 import sys
@@ -20,7 +20,7 @@ MODEL_PATH = "models/gesture_lstm_model_dual_v4.h5" # lstm 모델 파일 경로 
 ENCODER_PATH = "processed_lstm/label_encoder_lstm_dual.pkl" # preprocess/*.pkl 파일 경로 대입
 T5_MODEL_PATH = "./my_finetuned_t5_model"
 FRAMES_PER_SEQUENCE = 30 
-FONT_PATH = "C:/Windows/Fonts/malgun.ttf"
+FONT_PATH = "/System/Library/Fonts/AppleGothic.ttf"
 CONFIDENCE_THRESHOLD = 0.75
 PREDICTION_INTERVAL = 3
 
@@ -151,7 +151,7 @@ async def receive_from_livekit():
 
     async def receive_frames(stream):
         async for frame in stream:
-            converted_frame = frame.convert(proto_video.VideoBufferType.RGB24)
+            converted_frame = frame.convert(rtc.video_frame.proto_video.VideoBufferType.RGB24)
             image = np.frombuffer(converted_frame.data, dtype=np.uint8)
             image = image.reshape((converted_frame.height, converted_frame.width, 3))
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
