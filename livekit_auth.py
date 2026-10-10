@@ -1,48 +1,51 @@
-import time
-import jwt  # PyJWT 2.x 필요
+import jwt
+import datetime
 
-API_KEY = "devkey"      # 기존 코드랑 동일
-API_SECRET = "secret"   # 기존 코드랑 동일
+API_KEY = "devkey"
+API_SECRET = "secret"
 
-
-def create_token(
-    identity: str,
-    room_name: str
-) -> str:
+def create_token(identity: str, room_name: str) -> str:
     """
-    기존 AccessToken() + VideoGrants 와 동일한 LiveKit JWT 생성기.
-    from livekit import api 를 사용하지 않음.
+    LiveKit용 JWT 토큰 생성 (VideoGrants 직접 구성)
+
+    Args:
+        identity (str): 참가자 ID (예: "ksl_worker")
+        room_name (str): 입장할 방 이름 (예: "dev-room")
+
+    Returns:
+        str: 서명된 JWT 토큰
     """
 
-    now = int(time.time())
-    exp = now + 60 * 60  # 1시간 유효
+    now = datetime.datetime.utcnow()
 
+    # LiveKit 권한(비디오 그랜트) 설정
+    video_grants = {
+        "roomCreate": True,       # 방 만들기 권한
+        "roomJoin": True,         # 방 입장 권한
+        "room": room_name,        # 입장 가능한 방 이름
+        "canPublish": False,      # 미디어 publish 가능 여부
+        "canSubscribe": True,     # 구독 가능 여부
+        "canPublishData": True,   # 데이터 채널 publish 가능 여부
+    }
+
+    # LiveKit이 기대하는 payload 형식
     payload = {
-        "iss": API_KEY,      # issuer = API Key
-        "sub": identity,     # 참가자 identity
-        "nbf": now,
-        "exp": exp,
-
-        # VideoGrants 와 동일한 grant 구조
-        "video": {
-            "roomCreate": True,
-            "roomJoin": True,
-            "room": room_name,
-            "canPublish": False,
-            "canSubscribe": True,
-            "canPublishData": True,
-        }
+        "iss": API_KEY,          # 발급자: LiveKit API Key
+        "sub": identity,         # 토큰 주체: 참가자 identity
+        "iat": now,              # 발급 시간
+        "exp": now + datetime.timedelta(hours=1),  # 만료 시간 (1시간 유효)
+        "video": video_grants,   # 비디오 권한
     }
 
-    headers = {
-        "kid": API_KEY,
-        "typ": "JWT",
-        "alg": "HS256"
-    }
+    # HS256 알고리즘으로 서명
+    token = jwt.encode(
+        payload,
+        API_SECRET,
+        algorithm="HS256",
+        headers={"typ": "JWT", "alg": "HS256"}
+    )
 
-    token = jwt.encode(payload, API_SECRET, algorithm="HS256", headers=headers)
-
-    # PyJWT 2.x는 문자열을 반환하지만, bytes일 경우 decode 처리
+    # PyJWT 2.x는 str을 반환하지만, 혹시 bytes면 decode
     if isinstance(token, bytes):
         token = token.decode("utf-8")
 
