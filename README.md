@@ -1,101 +1,105 @@
-# 실시간 한·영 수어 번역
+<p align="right">
+<a href="README.md"><img src="https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-4f8cff?style=for-the-badge" alt="日本語"></a> <a href="README.ko.md"><img src="https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-d0d7de?style=for-the-badge" alt="한국어"></a>
+</p>
 
-한국 수어(KSL)와 미국 수어(ASL) 사용자가 영상 통화로 대화할 수 있도록, 손동작을 실시간으로 인식해 단어를 문장으로 만들어 상대에게 자막으로 보내는 시스템의 AI 서버입니다.
+# リアルタイム韓英手話翻訳
 
-## 프로젝트 정보
+韓国手話（KSL）とアメリカ手話（ASL）の使用者がビデオ通話で会話できるように、手の動きをリアルタイムで認識し、単語を文章にまとめて相手に字幕として送るシステムのAIサーバーです。
 
-| 항목 | 내용 |
+## プロジェクト情報
+
+| 項目 | 内容 |
 | --- | --- |
-| 기간 | 2025.03 ~ 2025.12 (캡스톤디자인 Ⅰ·Ⅱ) |
-| 소속 | 한밭대학교 컴퓨터공학과 졸업 프로젝트 |
-| 팀 | 김송이팀 3명 |
-| 역할 | 팀장, AI 총괄 |
+| 期間 | 2025.03 ~ 2025.12（キャップストーンデザイン Ⅰ・Ⅱ） |
+| 所属 | 国立ハンバット大学 コンピュータ工学科 卒業プロジェクト |
+| チーム | 김송이（Kimsongi）チーム 3名 |
+| 役割 | チームリーダー、AI統括 |
 
-## 내가 한 일
+## 担当したこと
 
-- **팀 리딩**: 프로젝트 전체를 총괄하며 구현 가능한 기술 범위와 그렇지 않은 범위를 나누고, 팀원이 막힐 때마다 해결책을 함께 찾았습니다.
-- **서버 추론 구조 제안**: 학습한 모델이 커서 처음 목표였던 온디바이스 실행이 어려워지자, 모델을 서버에 두고 앱과 네트워크로 결과를 주고받는 구조를 제안했습니다.
-- **ASL 인식 파이프라인 구축**: ASL 손동작 데이터를 직접 수집하고(22개 단어와 문장 종료 신호 `OK`), LSTM 단어 인식 모델을 학습했습니다. (`ASL_translation/`)
-- **ASL 문장 생성 모델 학습**: 인식된 영어 단어 나열을 문장으로 바꾸는 학습 데이터셋 689쌍을 만들고 T5 모델을 파인튜닝했습니다. 학습 곡선을 보며 과적합을 조정했습니다. (`ASL_translation/train_t5.py`, `train_dataset.json`)
-- **모델 저장소 이전**: 용량이 큰 모델 파일을 Git LFS에서 Google Drive로 옮기고, KSL·ASL 코드의 모델 경로를 바꿨습니다.
-- **실시간 통신 인증**: LiveKit 접속 토큰을 JWT로 발급하도록 `livekit_auth.py`를 수정했습니다.
+- **チームリーディング**: プロジェクト全体を統括し、実装できる技術範囲とそうでない範囲を切り分け、メンバーが行き詰まるたびに一緒に解決策を探しました。
+- **サーバー推論構成の提案**: 学習したモデルのサイズが大きく、当初の目標だったオンデバイス実行が難しくなったため、モデルをサーバーに置き、アプリとネットワーク経由で結果をやり取りする構成を提案しました。
+- **ASL認識パイプラインの構築**: ASLの手の動きのデータを自分で収集し（22単語と文の終了サイン `OK`）、LSTMによる単語認識モデルを学習しました。（`ASL_translation/`）
+- **ASL文章生成モデルの学習**: 認識された英単語の並びを文章に変換する学習データセット689ペアを作成し、T5モデルをファインチューニングしました。学習曲線を見ながら過学習を調整しました。（`ASL_translation/train_t5.py`, `train_dataset.json`）
+- **モデル保存先の移行**: 容量の大きいモデルファイルをGit LFSからGoogle Driveに移し、KSL・ASLのコード内のモデルパスを変更しました。
+- **リアルタイム通信の認証**: LiveKitの接続トークンをJWTで発行するように `livekit_auth.py` を修正しました。
 
-## 팀 구성
+## チーム構成
 
-| 이름 | 역할 | 담당 |
+| 名前 | 役割 | 担当 |
 | --- | --- | --- |
-| 이경림 | 팀장, AI 총괄 | 프로젝트 총괄, ASL 단어 인식·문장 생성, 모델 관리 |
-| 송채린 | AI 개발 | KSL 데이터 수집·전처리, KSL LSTM 학습, 문장 생성 모델 탐색·학습 |
-| 김하현 | 앱 개발 | Android 앱, LiveKit 기반 실시간 영상 통신, 서버 동시성 처리 |
+| 이경림（Lee Kyungrim） | チームリーダー、AI統括 | プロジェクト統括、ASL単語認識・文章生成、モデル管理 |
+| 송채린（Song Chaerin） | AI開発 | KSLデータ収集・前処理、KSL LSTM学習、文章生成モデルの調査・学習 |
+| 김하현（Kim Hahyeon） | アプリ開発 | Androidアプリ、LiveKitによるリアルタイム映像通信、サーバーの並行処理 |
 
-## 문제와 해결
+## 課題と解決
 
-**문제** — 나라마다 수어가 다르지만, 서로 다른 수어 사용자가 실시간으로 대화할 수 있는 앱은 찾기 어렵습니다. 기존 연구와 특허도 대부분 단어 단위 인식에 머물러 있어 문장으로 전달하지 못합니다.
+**課題** — 手話は国ごとに異なりますが、異なる手話の使用者同士がリアルタイムで会話できるアプリはほとんど見当たりません。既存の研究や特許も多くは単語単位の認識にとどまり、文章として伝えることができません。
 
-**해결** — 손동작으로 단어를 인식하는 데서 끝내지 않고, 인식한 단어들을 T5 모델로 문장으로 만든 뒤 상대방에게 보냅니다. 별도 장비 없이 스마트폰 카메라만 사용합니다.
+**解決** — 手の動きから単語を認識するだけで終わらせず、認識した単語をT5モデルで文章にしてから相手に送ります。特別な機器は使わず、スマートフォンのカメラだけを使います。
 
-## 시스템 구조
+## システム構成
 
 ```mermaid
 flowchart LR
-    A[Android 앱<br/>카메라 영상] -->|LiveKit| B[MediaPipe<br/>양손 관절 좌표]
-    B --> C[LSTM<br/>단어 인식]
-    C -->|OK 신호로 문장 종료| D[T5<br/>문장 생성]
-    D -->|LiveKit 데이터 채널| E[상대방 앱<br/>자막 표시]
+    A[Androidアプリ<br/>カメラ映像] -->|LiveKit| B[MediaPipe<br/>両手の関節座標]
+    B --> C[LSTM<br/>単語認識]
+    C -->|OKサインで文を終了| D[T5<br/>文章生成]
+    D -->|LiveKitデータチャネル| E[相手のアプリ<br/>字幕表示]
 ```
 
-1. 앱이 촬영한 영상을 LiveKit으로 서버에 보냅니다.
-2. MediaPipe로 프레임마다 양손 관절 좌표(2손 × 21점 × 3축 = 126값)를 뽑습니다.
-3. 30프레임을 하나의 시퀀스로 묶어 LSTM이 단어를 예측합니다. 신뢰도가 기준(KSL 0.75, ASL 0.85)을 넘을 때만 단어 목록에 추가합니다.
-4. `OK` 손동작이 들어오면 모은 단어를 T5에 넣어 문장을 만듭니다. T5는 화면 처리를 막지 않도록 별도 프로세스에서 돌아갑니다.
-5. 완성된 문장을 LiveKit 데이터 채널로 상대방(KSL ↔ ASL)에게 보냅니다. 앱은 Google ML Kit의 한국어→영어 번역을 사용합니다.
+1. アプリで撮影した映像をLiveKit経由でサーバーに送ります。
+2. MediaPipeでフレームごとに両手の関節座標（2手 × 21点 × 3軸 = 126値）を抽出します。
+3. 30フレームを1つのシーケンスとしてまとめ、LSTMが単語を予測します。信頼度がしきい値（KSL 0.75、ASL 0.85）を超えた場合のみ単語リストに追加します。
+4. `OK` の手の動きが入力されると、集めた単語をT5に入力して文章を生成します。T5は画面処理を妨げないよう別プロセスで動作します。
+5. 完成した文章をLiveKitのデータチャネルで相手（KSL ↔ ASL）に送ります。アプリではGoogle ML Kitの韓国語→英語翻訳を使用しています。
 
-## 모델
+## モデル
 
-| 모델 | 입력 → 출력 | 구성 |
+| モデル | 入力 → 出力 | 構成 |
 | --- | --- | --- |
-| KSL 단어 인식 | 손 좌표 30프레임 → 단어 23개 + `OK` | LSTM 3층 (64-128-64) + Dense |
-| ASL 단어 인식 | 손 좌표 30프레임 → 단어 22개 + `OK` | 같은 구조 |
-| 문장 생성 | 단어 나열 → 문장 (예: `문장 생성: Love, you` → `I love you.`) | `paust/pko-t5-base` 파인튜닝 |
+| KSL単語認識 | 手の座標30フレーム → 23単語 + `OK` | LSTM 3層（64-128-64）+ Dense |
+| ASL単語認識 | 手の座標30フレーム → 22単語 + `OK` | 同じ構成 |
+| 文章生成 | 単語の並び → 文章（例: `문장 생성: Love, you` → `I love you.`。`문장 생성` は「文章生成」を意味する入力プレフィックス） | `paust/pko-t5-base` をファインチューニング |
 
-KSL 인식 대상으로 검토한 전체 단어 목록과 인식 테스트 메모는 [docs/word-list.md](docs/word-list.md)에 있습니다.
+KSLの認識対象として検討した全単語リストと認識テストのメモは [docs/word-list.md](docs/word-list.md) にあります。
 
-## 폴더 구조
+## フォルダ構成
 
 ```
-├── save_sequence_data.py           # 웹캠으로 손 좌표 시퀀스 수집 (KSL)
-├── preprocess_multiple_csv_lstm.py # CSV → 학습용 numpy 배열
-├── train_lstm_model.py             # LSTM 단어 인식 모델 학습
-├── train_t5.py                     # T5 문장 생성 모델 학습
-├── realtime_predict_optimized.py   # 실시간 인식 서버 (KSL)
-├── run_all_dual_hand.py            # 전처리 → 학습 → 실시간 인식 순서로 실행
-├── livekit_auth.py                 # LiveKit 접속 토큰 발급
-├── data/                           # KSL 단어별 손 좌표 데이터
-├── models/                         # 학습된 KSL LSTM 모델 (.h5)
-└── ASL_translation/                # ASL용 같은 구성 + T5 학습 데이터셋
+├── save_sequence_data.py           # Webカメラで手の座標シーケンスを収集（KSL）
+├── preprocess_multiple_csv_lstm.py # CSV → 学習用numpy配列
+├── train_lstm_model.py             # LSTM単語認識モデルの学習
+├── train_t5.py                     # T5文章生成モデルの学習
+├── realtime_predict_optimized.py   # リアルタイム認識サーバー（KSL）
+├── run_all_dual_hand.py            # 前処理 → 学習 → リアルタイム認識の順に実行
+├── livekit_auth.py                 # LiveKit接続トークンの発行
+├── data/                           # KSL単語ごとの手の座標データ
+├── models/                         # 学習済みKSL LSTMモデル（.h5）
+└── ASL_translation/                # ASL用の同じ構成 + T5学習データセット
 ```
 
-## 실행 환경
+## 実行環境
 
-- Python 3.11 (`.python-version`)
-- 주요 라이브러리: TensorFlow/Keras, PyTorch, Transformers, MediaPipe, OpenCV, scikit-learn, LiveKit Python SDK, PyQt5, PyJWT
-- LiveKit 서버 (`livekit-server --dev`로 실행한 로컬 개발 서버 기준)
+- Python 3.11（`.python-version`）
+- 主なライブラリ: TensorFlow/Keras, PyTorch, Transformers, MediaPipe, OpenCV, scikit-learn, LiveKit Python SDK, PyQt5, PyJWT
+- LiveKitサーバー（`livekit-server --dev` で起動したローカル開発サーバーを前提）
 
-이 레포만으로는 바로 실행되지 않습니다.
+このリポジトリだけではそのまま実行できません。
 
-- 학습된 T5 모델 가중치는 용량 때문에 레포에 없고, Google Drive에 따로 보관했습니다.
-- `realtime_predict_optimized.py` 상단의 모델 경로(`MODEL_PATH`, `ENCODER_PATH`, `T5_MODEL_PATH`)가 개발 당시 로컬 경로로 고정되어 있습니다.
-- 서버 주소(`SERVER_URL`)와 LiveKit 키(`devkey`/`secret`)는 로컬 개발 서버의 기본값입니다.
+- 学習済みT5モデルの重みは容量の都合でリポジトリに含めず、Google Driveに別途保管しています。
+- `realtime_predict_optimized.py` 冒頭のモデルパス（`MODEL_PATH`, `ENCODER_PATH`, `T5_MODEL_PATH`）が開発当時のローカルパスに固定されています。
+- サーバーアドレス（`SERVER_URL`）とLiveKitのキー（`devkey`/`secret`）はローカル開発サーバーのデフォルト値です。
 
-## 한계와 배운 점
+## 限界と学んだこと
 
-- **비슷한 손동작 구분**: 같은 손 모양이 들어가는 단어(나/우리, 집/기숙사/식당, 마시다/맥주)는 잘 구분하지 못했습니다. 손목을 원점으로 좌표를 바꿔 화면 위치에 따른 오인식은 줄였지만, 같은 손 모양 자체를 구분하는 문제는 남았습니다.
-- **어휘 규모**: 데이터를 직접 촬영해 모으다 보니 KSL·ASL 각각 20여 개 단어에 그쳤습니다.
-- **실시간 통신 구조 변경**: 처음에는 WebRTC P2P로 연결했지만, 인식 서버까지 참여하면서 연결 수와 대역폭이 급격히 늘어 지연이 생겼습니다. 그래서 SFU 서버(LiveKit)가 영상을 받아 필요한 참여자에게만 중계하는 구조로 바꿨습니다.
-- **모델 파일 관리**: 모델 파일을 Git LFS에서 Google Drive로 옮기면서 모델 경로가 코드에 고정되었습니다. 경로를 설정 파일이나 환경 변수로 분리하는 것은 남은 과제입니다.
+- **似た手の動きの区別**: 同じ手の形を含む単語（私/私たち、家/寮/食堂、飲む/ビール）はうまく区別できませんでした。手首を原点として座標を変換することで画面上の位置による誤認識は減らしましたが、同じ手の形そのものを区別する問題は残りました。
+- **語彙の規模**: データを自分たちで撮影して集めたため、KSL・ASLそれぞれ20語あまりにとどまりました。
+- **リアルタイム通信構成の変更**: 当初はWebRTCのP2Pで接続していましたが、認識サーバーまで参加することで接続数と帯域が急増し、遅延が発生しました。そこで、SFUサーバー（LiveKit）が映像を受け取り、必要な参加者にだけ中継する構成に変更しました。
+- **モデルファイルの管理**: モデルファイルをGit LFSからGoogle Driveに移した際、モデルパスがコードに固定されてしまいました。パスを設定ファイルや環境変数に分離することは今後の課題です。
 
-## 관련 레포
+## 関連リポジトリ
 
-- [2025-capstone-gimsongi/sign-language-translation](https://github.com/2025-capstone-gimsongi/sign-language-translation) — 팀 원본 레포 (이 레포는 2025-12-07 최종본을 옮긴 것)
-- [2025-capstone-gimsongi/Suhwagi](https://github.com/2025-capstone-gimsongi/Suhwagi) — Android 앱
-- [HBNU-SWUNIV/hbnu-swuniv-capstone25-Kimsongi](https://github.com/HBNU-SWUNIV/hbnu-swuniv-capstone25-Kimsongi) — 캡스톤 보고서·발표자료
+- [2025-capstone-gimsongi/sign-language-translation](https://github.com/2025-capstone-gimsongi/sign-language-translation) — チームの元リポジトリ（このリポジトリは2025-12-07時点の最終版を移したもの）
+- [2025-capstone-gimsongi/Suhwagi](https://github.com/2025-capstone-gimsongi/Suhwagi) — Androidアプリ
+- [HBNU-SWUNIV/hbnu-swuniv-capstone25-Kimsongi](https://github.com/HBNU-SWUNIV/hbnu-swuniv-capstone25-Kimsongi) — キャップストーンの報告書・発表資料
